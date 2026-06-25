@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Delete Account — DraftIt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Space+Grotesk:wght@500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #0A0A0F;
+    color: #F0F0FF;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(60px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .orb-1 { width: 400px; height: 400px; background: rgba(108,99,255,0.15); top: -150px; right: -100px; }
+  .orb-2 { width: 300px; height: 300px; background: rgba(157,64,255,0.10); bottom: -100px; left: -80px; }
+
+  /* Nav */
+  nav {
+    position: relative; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .nav-logo {
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 20px rgba(108,99,255,0.35);
+  }
+
+  .logo-img {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+  }
+
+  .logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #F0F0FF;
+  }
+
+  .nav-links { display: flex; gap: 24px; }
+  .nav-links a {
+    color: #8888AA;
+    text-decoration: none;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: #F0F0FF; }
+
+  /* Page header */
+  .page-header {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 72px 24px 48px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    background: rgba(220,60,60,0.10);
+    border: 1px solid rgba(220,60,60,0.25);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #FF8080;
+    margin-bottom: 24px;
+  }
+
+  .page-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(30px, 5vw, 48px);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #F0F0FF, #9D97FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .page-header p {
+    font-size: 16px;
+    color: #8888AA;
+    line-height: 1.7;
+  }
+
+  /* Content */
+  .content {
+    position: relative; z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Section card */
+  .section-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 20px;
+    padding: 32px;
+    transition: border-color 0.2s;
+  }
+  .section-card:hover { border-color: rgba(108,99,255,0.25); }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .section-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .section-card h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #F0F0FF;
+  }
+
+  /* Steps */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .step-num {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: rgba(108,99,255,0.15);
+    border: 1px solid rgba(108,99,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #9D97FF;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-text {
+    font-size: 15px;
+    color: #C0C0D8;
+    line-height: 1.6;
+  }
+
+  .step-text strong {
+    color: #F0F0FF;
+    font-weight: 600;
+  }
+
+  /* Path pill — visual breadcrumb */
+  .path-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(108,99,255,0.10);
+    border: 1px solid rgba(108,99,255,0.2);
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #9D97FF;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .path-sep {
+    color: rgba(157,151,255,0.4);
+    font-size: 12px;
+  }
+
+  /* Email link */
+  .email-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-top: 16px;
+  }
+
+  .email-block span {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    color: #8888AA;
+    margin-right: auto;
+  }
+
+  .email-link {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #9D97FF;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(157,151,255,0.3);
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .email-link:hover { color: #C0BCFF; border-color: rgba(192,188,255,0.5); }
+
+  /* Data list */
+  .data-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .data-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 15px;
+    color: #C0C0D8;
+    line-height: 1.5;
+  }
+
+  .data-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #9D97FF;
+    margin-top: 8px;
+    flex-shrink: 0;
+  }
+
+  /* Warning card */
+  .warning-card {
+    background: rgba(220,60,60,0.06);
+    border: 1px solid rgba(220,60,60,0.18);
+    border-radius: 16px;
+    padding: 20px 24px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .warning-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .warning-card p {
+    font-size: 14px;
+    color: #D0A0A0;
+    line-height: 1.65;
+  }
+
+  .warning-card strong {
+    color: #FF9090;
+    font-weight: 600;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+    margin: 4px 0;
+  }
+
+  /* Footer */
+  footer {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 40px 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  footer p {
+    font-size: 13px;
+    color: #8888AA;
+    margin-bottom: 12px;
+  }
+
+  footer .footer-links {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+  }
+
+  footer .footer-links a {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    color: #8888AA;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  footer .footer-links a:hover { color: #9D97FF; }
+
+  @media (max-width: 600px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .page-header { padding: 48px 20px 32px; }
+    .section-card { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- Nav -->
+   <!-- <a href="/" class="back-link">← Back to DraftIt</a> -->
+
+
+<!-- Page Header -->
+<div class="page-header">
+    
+  <div class="badge">⚠ Account &amp; Data Deletion</div>
+  <h1>Delete Your Account</h1>
+  <p>You can permanently remove your DraftIt account and all associated data at any time. Here's exactly how.</p>
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <!-- Method 1: In-app -->
+  <div class="section-card">
+    <div class="section-label">
+      <div class="section-icon" style="background: rgba(108,99,255,0.12);">📱</div>
+      <h2>Delete from the App</h2>
+    </div>
+    <p style="font-size:14px; color:#8888AA; margin-bottom:20px;">The fastest way — takes under a minute from inside DraftIt.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Open DraftIt and make sure you're <strong>signed in</strong> to the account you want to delete.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Tap the <strong>Settings</strong> icon in the bottom navigation bar.</div>
+      </div>
+      <!-- <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Scroll down and tap <strong>Settings</strong>.</div>
+      </div> -->
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Select <strong>Delete Account</strong>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Confirm the deletion when prompted. Your account and all data will be queued for permanent removal.</div>
+      </div>
+    </div>
+
+    <!-- <div class="path-pill">
+      <span>Profile</span>
+      <span class="path-sep">›</span>
+      <span>Settings</span>
+      <span class="path-sep">›</span>
+      <span>Account</span>
+      <span class="path-sep">›</span>
+      <span>Delete Account</span>
+    </div>
+  </div> -->
+
+
+  <!-- Method 2: Email -->
+  <!-- <div class="section-card">
+    <div class="section-label">
+      <div class="section-icon" style="background: rgba(76,175,130,0.10);">✉️</div>
+      <h2>Request by Email</h2>
+    </div>
+    <p style="font-size:14px; color:#8888AA; margin-bottom:4px;">
+      Already uninstalled the app or can't access your account? Send us a deletion request directly.
+    </p>
+
+    <div class="email-block">
+      <span>Send your request to</span>
+      <a href="mailto:support@draftit.com" class="email-link">support@draftit.com</a>
+    </div>
+
+    <div style="margin-top: 16px; padding: 16px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+      <p style="font-size: 13px; color: #8888AA; margin-bottom: 10px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Include in your email</p>
+      <div class="data-list">
+        <div class="data-item"><div class="data-dot"></div>Your registered email address</div>
+        <div class="data-item"><div class="data-dot"></div>Subject line: <strong style="color:#F0F0FF;">Account Deletion Request</strong></div>
+        <div class="data-item"><div class="data-dot"></div>A short note confirming you want your account permanently deleted</div>
+      </div>
+    </div>
+  </div> -->
+
+  <!-- What gets deleted -->
+  <div class="section-card">
+    <div class="section-label">
+      <div class="section-icon" style="background: rgba(255,184,48,0.10);">🗂️</div>
+      <h2>What Gets Deleted</h2>
+    </div>
+    <p style="font-size:14px; color:#8888AA; margin-bottom:20px;">Upon confirmation, we permanently purge the following within <strong style="color: #F0F0FF;">30 days</strong>:</p>
+
+    <div class="data-list">
+      <div class="data-item"><div class="data-dot"></div>Your profile and authentication credentials</div>
+      <div class="data-item"><div class="data-dot"></div>All lecture recordings and transcripts</div>
+      <div class="data-item"><div class="data-dot"></div>AI-generated notes, summaries, and exam questions</div>
+      <div class="data-item"><div class="data-dot"></div>Resumes and career documents created in the app</div>
+      <div class="data-item"><div class="data-dot"></div>Any saved preferences and usage history</div>
+    </div>
+
+    <div class="divider" style="margin-top: 20px; margin-bottom: 20px;"></div>
+
+    <div class="warning-card">
+      <div class="warning-icon">⚠️</div>
+      <p><strong>This action is permanent and cannot be undone.</strong> Once deleted, your data cannot be recovered. Please download any notes or resumes you want to keep before requesting deletion.</p>
+    </div>
+  </div>
+
+  <!-- Response time -->
+  <div class="section-card">
+    <div class="section-label">
+      <div class="section-icon" style="background: rgba(108,99,255,0.12);">⏱️</div>
+      <h2>Timeline</h2>
+    </div>
+    <div class="data-list">
+      <div class="data-item"><div class="data-dot"></div>In-app deletions are processed <strong style="color:#F0F0FF;">immediately</strong> upon confirmation.</div>
+      <div class="data-item"><div class="data-dot"></div>Email requests are acknowledged within <strong style="color:#F0F0FF;">2 business days</strong>.</div>
+      <div class="data-item"><div class="data-dot"></div>All data is fully purged from our servers within <strong style="color:#F0F0FF;">30 days</strong> of the request.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer>
+  <p>© 2026 DraftIt. All rights reserved.</p>
+  <div class="footer-links">
+    <a href="/privacy.html">Privacy Policy</a>
+    <a href="/terms.html">Terms of Service</a>
+    <a href="mailto:support@draftit.com">Contact</a>
+  </div>
+</footer>
+
+</body>
+</html>
